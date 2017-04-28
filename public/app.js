@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
+const models = require('./models');
 // point nunjucks to the directory containing templates and turn off caching; configure returns an Environment
 // instance, which we'll want to use to add Markdown support later.
 var env = nunjucks.configure('views', {noCache: true});
@@ -17,11 +18,18 @@ app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: true })); // for HTML form submits
 app.use(bodyParser.json()); // would be for AJAX requests
 
-
-// start the server
-app.listen(1337, function(){
-  console.log('listening on port 1337');
-});
+// .sync creates the tables
+models.User.sync({})
+.then(function () {
+    return models.Page.sync({})
+})
+// event handling
+.then(function () {
+    app.listen(3000, function () {
+        console.log('Server is listening on port 3001!');
+    });
+})
+.catch(console.error);
 
 app.use(express.static(path.join(__dirname, '/public')));
 
