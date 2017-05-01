@@ -2,12 +2,15 @@ const express = require('express');
 const app = express();
 const router = express.Router();
 var models = require('../models');
+const nunjucks = require('nunjucks');
 var Page = models.Page;
 var User = models.User;
 
 router.get('/', function(req, res, next) {
-  res.send('got to GET /wiki/');
-  res.redirect('/');
+  Page.findAll()
+    .then(function(allPages) {
+      res.render('../views/index', { allPages: allPages });
+    })
 });
 
 router.post('/', function(req, res, next) {
@@ -18,7 +21,11 @@ router.post('/', function(req, res, next) {
     title: req.body.title,
     content: req.body.content
   })
-    .then(res.json(req.body));
+    .then(function(savedPage) {
+      console.log("savedPage", savedPage);
+      res.redirect(savedPage.route);
+  })
+  .catch(next);
 
   // Alternate way to add a new page to our database table
   // reference: https://learn.fullstackacademy.com/workshop/572372d780f8bb03009db806/content/57238a922cce560300a5ac55/text
@@ -28,7 +35,8 @@ router.post('/', function(req, res, next) {
   // })
   //   .save()
   //   .then(res.json(req.body));
-  });
+
+});
 
 router.get('/add', function(req, res, next) {
   res.render('../views/addpage');
@@ -41,7 +49,8 @@ router.get('/:urlTitle', function (req, res, next) {
     }
   })
   .then(function(foundPage){
-    res.json(foundPage);
+    // res.send(foundPage);
+    res.render('../views/wikipage', { foundPage: foundPage } );
   })
   .catch(next);
 

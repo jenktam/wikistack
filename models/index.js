@@ -12,10 +12,7 @@ var Page = db.define('page', {
   urlTitle: {
     type: Sequelize.STRING,
     allowNull: false,
-    notEmpty: true,
-    getterMethods: {
-      route: function()  { return '/wiki/' + this.urlTitle }
-    },
+    notEmpty: true
   },
   content: {
     type: Sequelize.TEXT,
@@ -33,7 +30,12 @@ var Page = db.define('page', {
     type: Sequelize.DATE,
     defaultValue: Sequelize.NOW
   }
-});
+},{
+    getterMethods: {
+      route: function()  { return '/wiki/' + this.urlTitle }
+    },
+  }
+);
 
 Page.hook('beforeValidate', function generateUrlTitle(page) {
   if (page.title) {
@@ -60,6 +62,8 @@ var User = db.define('user', {
         notEmpty: true
     }
 });
+
+// Page.belongsTo(User, { as: 'author' });
 
 module.exports = {
   db: db,
