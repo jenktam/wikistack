@@ -29,11 +29,55 @@ var Page = db.define('page', {
   date: {
     type: Sequelize.DATE,
     defaultValue: Sequelize.NOW
+  },
+  tags: {
+    type: Sequelize.ARRAY(Sequelize.STRING), //holds an array of strings
+    defaultValue: [],
+    set: function(tags) {
+
+      tags = tags || [];
+
+      if(typeof tags === 'string') {
+        tags = tags.split(',').map(function(str) {
+          return str.trim();
+        });
+      }
+
+      this.setDataValue('tags', tags);
+    }
   }
 },{
     getterMethods: {
-      route: function()  { return '/wiki/' + this.urlTitle }
+      route: function()  {
+        return '/wiki/' + this.urlTitle }
     },
+    classMethods: {
+      findByTag: function(tag) {
+        return this.findAll({
+          // $overlap matches a set of possibilities
+          where: {
+            tags: {
+              $overlap: ['someTag', 'someOtherTag']
+            }
+          }
+        })
+      }
+    },
+    // used to navigate to similar pages
+    instanceMethods: {
+      findSimilar: function() {
+        return Page.findAll({
+          where: {
+            id: {
+              $ne: this.id
+            },
+            tags: {
+              $overlap: this.tags
+            }
+          }
+        });
+      }
+    }
   }
 );
 
@@ -63,7 +107,7 @@ var User = db.define('user', {
     }
 });
 
-// Page.belongsTo(User, { as: 'author' });
+Page.belongsTo(User, { as: 'author' });;
 
 module.exports = {
   db: db,

@@ -31,7 +31,7 @@ app.use('/', routes);
 // .sync creates the tables
 models.User.sync({})
 .then(function () {
-    return models.Page.sync({})
+    return models.Page.sync({ }) //If want to delete table,  { force: true }
 })
 .then(function () {
     // make sure to replace the name below with your express app

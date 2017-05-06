@@ -5,11 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon -e html,js,css /Users/aliceperez/Fullstack/wikistack"
+    "start": "nodemon -e html,js,css /Users/jentam/Fullstack/wikistack"
   },
   "repository": {
     "type": "git",
-    "url": "/Users/aliceperez/Fullstack/wikistack/.git/"
+    "url": "/Users/jentam/Fullstack/wikistack/.git/"
   },
   "author": "Alice, Jen, Maureen",
   "license": "ISC",
